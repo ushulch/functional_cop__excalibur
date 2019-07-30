@@ -1,0 +1,36 @@
+name:                excalibur-dal
+version:             1.0.0.0
+github:              "githubuser/excalibur-dal"
+license:             BSD3
+author:              "Charles Shuller"
+maintainer:          "example@example.com"
+copyright:           "2019 Charles Shuller"
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/githubuser/excalibur-dal#readme>
+
+dependencies:
+  - base >= 4.7 && < 5
+  - HDBC >= 2.4.0.2 && < 3
+  - HDBC-postgresql >= 2.3.2.6 && < 3
+
+
+library:
+  source-dirs: src
+
+tests:
+  lc-dal-test:
+    defaults: hspec/hspec@master
+    dependencies:
+      - excalibur-dal
