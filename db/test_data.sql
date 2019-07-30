@@ -1,0 +1,31 @@
+truncate transactions;
+
+insert into
+   transactions (id,
+                 date,
+                 vendor,
+                 amount)
+   values ('b6df5836-a643-44c2-86ee-78e0113f5e80',
+           '2019-01-01',
+           'wallgreens',
+           22.38),
+           ('42d28f66-1184-40a8-b1b1-7a19c92a7ef6',
+            '2019-01-02',
+            'wallgreens',
+            77.62),
+           ('4d915550-e72f-4df4-8e97-ec2b9693cc5d',
+            '2019-02-04',
+            'wallgreens',
+            77.62),
+           ('0aa9d2eb-d38b-486a-b949-93899679d30c',
+            '2019-02-05',
+            'wallgreens',
+            22.38),
+           ('aeeb9ad3-ee58-46c1-801b-54159da7294b',
+            '2019-01-10',
+            'amazon.com',
+            22.38),
+           ('1654e880-a82a-4758-b8b3-83ec0e4a189b',
+            '2019-01-11',
+            'amazon.com',
+            77.62);
