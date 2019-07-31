@@ -2,14 +2,21 @@ module ExcaliburDal
   (
     connect,
     ExcaliburDal.disconnect,
-    insertTransaction
+    insertTransaction,
+    lookupTransaction
   ) where
 
 
 import Database.HDBC
 import qualified Database.HDBC.PostgreSQL as PSQL
-import Date.Time.Calendar
-import Data.UUID
+import Data.Time.Calendar
+import Data.Time.Format
+import qualified Data.UUID as UUID
+import Data.Maybe
+
+import Debug.Trace
+
+import qualified ExcaliburData.Transaction as Transaction
 
 type Connection = PSQL.Connection
 
@@ -25,13 +32,13 @@ disconnect = Database.HDBC.disconnect
 
 
 
-insertTransaction :: Connection -> Transaction -> IO ()
+insertTransaction :: Connection -> Transaction.Transaction -> IO ()
 insertTransaction connection transaction =
   let
-    sqlId = UUID.toString Transaction.id transaction
-    sqlDate = toSql $ showGregorian $ Transaction.date transaction,
-    sqlVendor = toSql $ Transaction.vendor
-    sqlAmount = toSql $ Transaction.amount
+    sqlId = toSql $ UUID.toString $ Transaction.id transaction
+    sqlDate = toSql $ showGregorian $ Transaction.date transaction
+    sqlVendor = toSql $ Transaction.vendor transaction
+    sqlAmount = toSql $ Transaction.amount transaction
 
     sqlString = "insert into " ++
                 "   transactions " ++
@@ -58,29 +65,51 @@ insertTransaction connection transaction =
     >> return ()
 
 
+dayFromIsoString :: Maybe String -> Maybe Day
+dayFromIsoString maybeIsoString =
+  case maybeIsoString of
+    Just isoString ->
+      parseTimeM True defaultTimeLocale "%F" isoString
+    Nothing ->
+      Nothing
 
-maybeValueFromRows :: [[SqlValue]] -> Maybe Value
-maybeValueFromRows [characterRow] =
+
+maybeTransactionFromRows :: [[SqlValue]] -> Maybe Transaction.Transaction
+maybeTransactionFromRows [characterRow] =
   let
-    value = fromSql $ characterRow !! 0
+    maybeId = UUID.fromString $ fromSql $ characterRow !! 0
+    maybeDate = dayFromIsoString $ fromSql $ characterRow !! 1
+    vendor = fromSql $ characterRow !! 2
+    amount = fromSql $ characterRow !! 3
+
+    anyNothings = (isNothing maybeId) && (isNothing maybeDate)
   in
-    Just value
+    trace ("maybeTransactionFromRows: " ++ (show maybeId) ++ " " ++ (show maybeDate)) $
+    case anyNothings of
+      True ->
+        Nothing
+      False ->
+        Just $ Transaction.Transaction (fromJust maybeId) (fromJust maybeDate) vendor amount
 
-maybeValueFromRows _ = Nothing
+
+maybeTransactionFromRows _ = Nothing
 
 
 
-lookup :: Connection -> Collection -> Key -> IO (Maybe Value)
-lookup  connection collection key =
+lookupTransaction :: Connection -> UUID.UUID -> IO (Maybe Transaction.Transaction)
+lookupTransaction connection transactionId =
   let
+    sqlId = toSql $ UUID.toString transactionId
+
     sqlString = "select " ++
-                "   value " ++
+                "   id, date, vendor, amount::numeric(20, 2) " ++
                 "from " ++
-                    (T.unpack collection) ++ " " ++
+                "   transactions " ++
                 "where " ++
-                "       key = ?;"
+                "       id = ?;"
 
-    sqlArgList = [toSql key]
+    sqlArgList = [sqlId]
   in
+    trace "lookupTransaction" $
     withTransaction connection $ \c -> quickQuery' c sqlString sqlArgList
-    >>= \listOfRows -> return (maybeValueFromRows listOfRows)
+    >>= \listOfRows -> return (maybeTransactionFromRows listOfRows)

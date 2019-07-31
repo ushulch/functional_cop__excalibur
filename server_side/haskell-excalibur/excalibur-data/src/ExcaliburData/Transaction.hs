@@ -7,5 +7,5 @@ import qualified Data.Time.Calendar as Calendar
 data Transaction = Transaction {id :: UUID.UUID,
                                 date :: Calendar.Day,
                                 vendor :: String,
-                                amount :: Float}
+                                amount :: Double}
   deriving (Show, Eq)
