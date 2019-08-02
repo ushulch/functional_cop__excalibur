@@ -1,5 +1,5 @@
 name:                excalibur-dal
-version:             1.0.0.0
+version:             1.0.1.0
 github:              "githubuser/excalibur-dal"
 license:             BSD3
 author:              "Charles Shuller"
@@ -26,7 +26,7 @@ dependencies:
   - HDBC-postgresql >= 2.3.2.6 && < 3
   - time >= 1.8.0.2 && < 2
   - uuid >= 1.3.13 && < 2
-  - excalibur-data
+  - excalibur-data >= 1.1.0.1 && < 2
 
 library:
   source-dirs: src

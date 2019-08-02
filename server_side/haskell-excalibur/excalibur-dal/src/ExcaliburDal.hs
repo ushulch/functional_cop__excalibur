@@ -3,7 +3,8 @@ module ExcaliburDal
     connect,
     ExcaliburDal.disconnect,
     insertTransaction,
-    lookupTransaction
+    lookupTransaction,
+    listTransactions
   ) where
 
 
@@ -13,8 +14,6 @@ import Data.Time.Calendar
 import Data.Time.Format
 import qualified Data.UUID as UUID
 import Data.Maybe
-
-import Debug.Trace
 
 import qualified ExcaliburData.Transaction as Transaction
 
@@ -74,17 +73,16 @@ dayFromIsoString maybeIsoString =
       Nothing
 
 
-maybeTransactionFromRows :: [[SqlValue]] -> Maybe Transaction.Transaction
-maybeTransactionFromRows [characterRow] =
+maybeTransactionFromRow :: [SqlValue] -> Maybe Transaction.Transaction
+maybeTransactionFromRow transactionRow =
   let
-    maybeId = UUID.fromString $ fromSql $ characterRow !! 0
-    maybeDate = dayFromIsoString $ fromSql $ characterRow !! 1
-    vendor = fromSql $ characterRow !! 2
-    amount = fromSql $ characterRow !! 3
+    maybeId = UUID.fromString $ fromSql $ transactionRow !! 0
+    maybeDate = dayFromIsoString $ fromSql $ transactionRow !! 1
+    vendor = fromSql $ transactionRow !! 2
+    amount = fromSql $ transactionRow !! 3
 
     anyNothings = (isNothing maybeId) && (isNothing maybeDate)
   in
-    trace ("maybeTransactionFromRows: " ++ (show maybeId) ++ " " ++ (show maybeDate)) $
     case anyNothings of
       True ->
         Nothing
@@ -92,7 +90,18 @@ maybeTransactionFromRows [characterRow] =
         Just $ Transaction.Transaction (fromJust maybeId) (fromJust maybeDate) vendor amount
 
 
+maybeTransactionFromRows :: [[SqlValue]] -> Maybe Transaction.Transaction
+maybeTransactionFromRows [transactionRow] =
+  maybeTransactionFromRow transactionRow
+
 maybeTransactionFromRows _ = Nothing
+
+
+
+transactionsFromRows :: [[SqlValue]] -> [Transaction.Transaction]
+transactionsFromRows transactionRowList =
+  mapMaybe maybeTransactionFromRow transactionRowList
+
 
 
 
@@ -110,6 +119,20 @@ lookupTransaction connection transactionId =
 
     sqlArgList = [sqlId]
   in
-    trace "lookupTransaction" $
     withTransaction connection $ \c -> quickQuery' c sqlString sqlArgList
     >>= \listOfRows -> return (maybeTransactionFromRows listOfRows)
+
+
+
+
+listTransactions :: Connection -> IO [Transaction.Transaction]
+listTransactions connection =
+  let
+    sqlString = "select " ++
+                "   id, date, vendor, amount::numeric(20, 2) " ++
+                "from " ++
+                "   transactions;"
+
+  in
+    withTransaction connection $ \c -> quickQuery' c sqlString []
+    >>= \listOfRows -> return (transactionsFromRows listOfRows)

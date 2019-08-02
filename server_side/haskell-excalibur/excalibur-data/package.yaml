@@ -1,5 +1,5 @@
 name:                excalibur-data
-version:             1.0.0.0
+version:             1.1.0.1
 github:              "githubuser/excalibur-data"
 license:             BSD3
 author:              "Charles Shuller"
@@ -23,6 +23,7 @@ dependencies:
   - base >= 4.7 && < 5
   - uuid >= 1.3.13 && < 2
   - time >= 1.8.0.2 && < 2
+  - aeson >= 1.3.1.1 && < 2
 
 library:
   source-dirs: src
