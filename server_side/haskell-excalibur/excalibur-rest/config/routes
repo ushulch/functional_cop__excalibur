@@ -12,3 +12,7 @@
 
 
 /transactions TransactionsR GET
+/transactions/#String TransactionR GET PUT
+
+/values ValuesR GET
+/values/#Int/#Int   AddR GET

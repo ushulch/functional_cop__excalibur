@@ -4,7 +4,8 @@ module ExcaliburDal
     ExcaliburDal.disconnect,
     insertTransaction,
     lookupTransaction,
-    listTransactions
+    listTransactions,
+    Connection
   ) where
 
 
@@ -44,7 +45,7 @@ insertTransaction connection transaction =
                 "      (id, date, vendor, amount) " ++
                 "   values (?, ?, ?, ?) " ++
                 "on conflict " ++
-                "   (key) " ++
+                "   (id) " ++
                 "do update set " ++
                 "   date = ?, " ++
                 "   vendor = ?, " ++
