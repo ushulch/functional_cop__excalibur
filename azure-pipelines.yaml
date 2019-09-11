@@ -6,31 +6,33 @@ variables:
   dotnetTestProjects: '**/server_side/dotnet-excalibur/**/*.Test.csproj'
 
 
-jobs:
-  -job:
-    pool:
-      name: Azure Pipelines
-      vmImage: ubuntu-latest
+stages:
+  - stage:
+      jobs:
+        - job:
+            pool:
+              name: Azure Pipelines
+              vmImage: ubuntu-latest
 
-    steps:
-      - task: DotNetCoreCLI@2
-        displayName: Restore
-        inputs:
-          command: restore
-          projects: '$(dotnetProjects)'
-
-
-      - task: DotNetCoreCLI@2
-        displayName: Build
-        inputs:
-          command: build
-          projects: '$(dotnetProjects)'
-          arguments: '--configuration $(BuildConfiguration)'
+            steps:
+              - task: DotNetCoreCLI@2
+                displayName: Restore
+                inputs:
+                  command: restore
+                  projects: '$(dotnetProjects)'
 
 
-      - task: DotNetCoreCLI@2
-        displayName: Test
-        inputs:
-          command: test
-          projects: '$(dotnetTestProjects)'
-          arguments: '--configuration $(BuildConfiguration)'
+              - task: DotNetCoreCLI@2
+                displayName: Build
+                inputs:
+                  command: build
+                  projects: '$(dotnetProjects)'
+                  arguments: '--configuration $(BuildConfiguration)'
+
+
+              - task: DotNetCoreCLI@2
+                displayName: Test
+                inputs:
+                  command: test
+                  projects: '$(dotnetTestProjects)'
+                  arguments: '--configuration $(BuildConfiguration)'
