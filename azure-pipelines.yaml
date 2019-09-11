@@ -2,8 +2,8 @@ name: Excalibur Build Pipeline
 
 variables:
   dotnetBasePath: './server_side/dotnet-excalibur'
-  dotnetProjects: '$(dotnetBasePath)/**/*.csproj'
-  dotnetTestProjects: '$(dotnetBasePath)/**/*.Test.csproj'
+  dotnetProjects: './server_side/dotnet-excalibur/**/*.csproj'
+  dotnetTestProjects: './server_side/dotnet-excalibur/**/*.Test.csproj'
 
 pool:
   name: Azure Pipelines
