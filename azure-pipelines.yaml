@@ -5,6 +5,7 @@ variables:
   dotnetProjects: '**/server_side/dotnet-excalibur/**/*.csproj'
   dotnetTestProjects: '**/server_side/dotnet-excalibur/**/*.Test.csproj'
 
+
 jobs:
   -job:
     pool:
