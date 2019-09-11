@@ -5,13 +5,12 @@ variables:
   dotnetProjects: '**/server_side/dotnet-excalibur/**/*.csproj'
   dotnetTestProjects: '**/server_side/dotnet-excalibur/**/*.Test.csproj'
 
-pool:
-  name: Azure Pipelines
-  vmImage: ubuntu-latest
-
-
 jobs:
-  job:
+  -job:
+    pool:
+      name: Azure Pipelines
+      vmImage: ubuntu-latest
+
     steps:
       - task: DotNetCoreCLI@2
         displayName: Restore
