@@ -2,7 +2,8 @@ name: Excalibur Build Pipeline
 
 trigger:
   batch: true
-  branches: ['master']
+  branches:
+    include: ['master']
 
 variables:
   dotnetBasePath: '**/server_side/dotnet-excalibur'
