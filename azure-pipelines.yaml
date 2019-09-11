@@ -1,7 +1,7 @@
 variables:
   dotnetBasePath: './server_side/dotnet-excalibur'
-  dotnetProjects: '${{ join("/", [variables.dotnetBasePath, "**/*.csproj"]) }}'
-  dotnetTestProjects: '${{ join("/", [variables.dotnetBasePath, "**/*Test.csproj"]) }}'
+  dotnetProjects: '$(dotnetBasePath)/**/*.csproj'
+  dotnetTestProjects: '$(dotnetBasePath)/**/*.Test.csproj'
 
 pool:
   name: Azure Pipelines
