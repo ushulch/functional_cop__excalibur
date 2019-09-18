@@ -7,7 +7,7 @@ resolver: lts-12.26
 packages:
   - excalibur-data
   - excalibur-dal
-  - excalibur-rest
+  - excalibur-yesod-rest
 
 
 extra-deps:
